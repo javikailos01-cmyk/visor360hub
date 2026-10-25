@@ -1,0 +1,116 @@
+[
+    {
+        "id": "producto-1",
+        "titulo": "PRODUCTO 1",
+        "descripcion": "",
+        "portada": "assets/producto-1/portada-mural.webp",
+        "imagePath": "assets/producto-1/tira_producto_horizontal.webp",
+        "totalFrames": 8,
+        "frameWidth": 500,
+        "frameHeight": 960,
+        "hotspots": [],
+        "tipoVisor": "cilindrico",
+        "tipoAsset": "sprite"
+    },
+    {
+        "id": "producto-2",
+        "titulo": "PRODUCTO 2",
+        "descripcion": "",
+        "portada": "assets/producto-2/portada-puente.webp",
+        "imagePath": "assets/producto-2/tira_producto_horizontal.webp",
+        "totalFrames": 8,
+        "frameWidth": 500,
+        "frameHeight": 960,
+        "hotspots": [],
+        "tipoVisor": "cilindrico"
+    },
+    {
+        "id": "producto-3",
+        "titulo": "PRODUCTO 3",
+        "descripcion": "",
+        "portada": "assets/producto-3/portada-puentecito.webp",
+        "imagePath": "assets/producto-3/giro_ftgramoptimizado4.webm",
+        "totalFrames": 60,
+        "frameWidth": 640,
+        "frameHeight": 960,
+        "hotspots": [
+            {
+                "id": "hotspot_1792874060172",
+                "vista": "PRODUCTO 3",
+                "frame": 3,
+                "x": "50.6%",
+                "y": "34.7%",
+                "titulo": "Nuevo Componente",
+                "descripcion": "Descripción detallada del componente.",
+                "tipo": "exacto",
+                "imagenes": [],
+                "sub360": null
+            }
+        ],
+        "tipoVisor": "cilindrico",
+        "tipoAsset": "video"
+    },
+    {
+        "id": "producto-4",
+        "titulo": "PRODUCTO 4",
+        "descripcion": "",
+        "portada": "assets/producto-4/portada-museo.webp",
+        "imagePath": "assets/producto-4/tira_producto_horizontal.webp",
+        "totalFrames": 8,
+        "frameWidth": 500,
+        "frameHeight": 960,
+        "hotspots": [],
+        "tipoVisor": "cilindrico"
+    },
+    {
+        "id": "producto-5",
+        "titulo": "PRODUCTO 5",
+        "descripcion": "",
+        "portada": "assets/producto-5/portada-iglesia.webp",
+        "imagePath": "assets/producto-5/giro_balanceado.webm",
+        "totalFrames": 60,
+        "frameWidth": 640,
+        "frameHeight": 960,
+        "hotspots": [],
+        "tipoVisor": "cilindrico",
+        "tipoAsset": "video"
+    },
+    {
+        "id": "producto-6",
+        "titulo": "PRODUCTO 6",
+        "descripcion": "",
+        "portada": "assets/producto-6/portada-7.PNG",
+        "imagePath": "assets/producto-6/giro_balanceado.webm",
+        "totalFrames": 60,
+        "frameWidth": 640,
+        "frameHeight": 960,
+        "hotspots": [],
+        "tipoVisor": "cilindrico",
+        "tipoAsset": "video"
+    },
+    {
+        "id": "producto-7",
+        "titulo": "PRODUCTO 7",
+        "descripcion": "",
+        "portada": "assets/producto-7/portada-7.PNG",
+        "imagePath": "assets/producto-7/giro_balanceado.webm",
+        "totalFrames": 60,
+        "frameWidth": 640,
+        "frameHeight": 960,
+        "hotspots": [],
+        "tipoVisor": "cilindrico",
+        "tipoAsset": "video"
+    },
+    {
+        "id": "productos-2",
+        "titulo": "PRODUCTOS 2",
+        "descripcion": "",
+        "portada": "assets/productos-2/portada-puente.webp",
+        "imagePath": "assets/productos-2/tira_producto_horizontal.webp",
+        "tipoVisor": "cilindrico",
+        "totalFrames": 8,
+        "frameWidth": 500,
+        "frameHeight": 960,
+        "hotspots": []
+    }
+]

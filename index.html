@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruta Digital Ads - Visor 360°</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <!-- Fondo abstracto de gran avenida con edificios laterales -->
+    <div class="city-perspective-bg"></div>
+
+    <div class="branding-text">
+        <img src="solo circulo-ruta digital.png" alt="Ruta Digital Ads" class="brand-logo">
+    </div>
+    <div id="gradient-line" class="gradient-line"></div>
+
+    <!-- PANTALLA DE INICIO / CATÁLOGO -->
+    <div id="inicio-screen" class="screen active">
+        <div id="tarjetas-container" class="cards-grid">
+            <!-- Las tarjetas se cargan dinámicamente desde visor.js -->
+        </div>
+    </div>
+
+    <!-- PANTALLA DEL VISOR 360° -->
+    <div id="visor-screen" class="screen">
+        <div class="visor-container">
+            <canvas class="visor-canvas"></canvas>
+
+            <div class="visor-hint">
+                <div class="visor-hint-icon-box">
+                    <span class="hint-side">‹</span>
+                    <span class="hint-main">↔</span>
+                    <span class="hint-side">›</span>
+                </div>
+            </div>
+
+            <div class="visor-loader">Cargando visor 360...</div>
+            <div id="hotspots-container"></div>
+
+            <!-- Botón Volver al Catálogo en la esquina inferior izquierda -->
+            <button id="btn-back-catalog" class="btn-back-catalog" title="Volver al Catálogo">↩</button>
+
+            <!-- Botón de Pantalla Completa en la esquina inferior derecha -->
+            <button id="btn-fullscreen" class="btn-fullscreen" title="Pantalla Completa">⛶</button>
+        </div>
+
+        <div id="product-info" class="product-info"></div>
+    </div>
+
+    <!-- PANEL DE EDITOR -->
+    <div id="panel-editor" class="hidden">
+        <h4 class="editor-titulo">Panel de Editor de Hotspots</h4>
+
+        <div id="contador-clicks" class="editor-contador">
+            Hotspots capturados: 0
+        </div>
+
+        <div class="editor-botones">
+            <button id="btn-guardar-hotspots" class="btn-editor-guardar">Guardar Hotspots</button>
+            <button id="btn-resetear-editor" class="btn-editor-reset">Reiniciar Hotspots</button>
+            <button id="btn-cerrar-editor" class="btn-editor-cerrar">✕ Cerrar Editor</button>
+        </div>
+
+        <div id="resultado-paquete" class="editor-resultado"></div>
+    </div>
+
+    <!-- MODAL FLOTANTE DE DETALLE -->
+    <div id="hotspot-modal" class="modal-overlay hidden">
+        <div class="modal-content-box">
+            <h3 id="modal-titulo">Detalle</h3>
+            <p id="modal-descripcion" style="display: none; font-size: 0.8rem; color: #cbd5e1; margin: 0 0 10px 0; text-align: left;"></p>
+            <div id="modal-img-container"></div>
+            <div class="modal-buttons-container">
+                <button id="btn-volver-360" class="modal-btn">Volver al 360°</button>
+                <button id="btn-volver-catalogo" class="modal-btn">Volver al Catálogo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js CDN integrado -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="visor.js"></script>
+    <script>
+        // Sincronización robusta con localStorage para evitar conflictos de persistencia del editor
+        const btnCerrarEditorInline = document.getElementById("btn-cerrar-editor");
+        const panelEditorInline = document.getElementById("panel-editor");
+
+        if (btnCerrarEditorInline && panelEditorInline) {
+            btnCerrarEditorInline.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                localStorage.setItem("modo_editor", "false");
+                panelEditorInline.classList.add("hidden");
+                panelEditorInline.style.display = "none";
+
+                const resultadoPaquete = document.getElementById("resultado-paquete");
+                if (resultadoPaquete) resultadoPaquete.innerHTML = "";
+            });
+        }
+    </script>
+</body>
+</html>

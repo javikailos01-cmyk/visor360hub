@@ -1,0 +1,859 @@
+/* ==========================================================
+   ESTILOS GENERALES Y LAYOUT
+   ========================================================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0f172a;
+    color: #f8fafc;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Fondo abstracto de gran avenida con edificios laterales */
+.city-perspective-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Cg stroke='%2338bdf8' stroke-width='1.2' fill='none'%3E%3Cpath d='M600 0 L150 800 M600 0 L1050 800' opacity='0.4'/%3E%3Cpath d='M600 0 L600 800' opacity='0.6' stroke-dasharray='10 10'/%3E%3Cpath d='M0 800 L0 300 L120 250 L120 800 M120 250 L220 200 L220 800 M0 450 L120 400 M120 330 L220 280 M0 600 L120 550' opacity='0.45'/%3E%3Cpath d='M50 800 L50 350 M85 800 L85 280 M160 800 L160 230' opacity='0.25' stroke-dasharray='5 5'/%3E%3Cpath d='M1200 800 L1200 300 L1080 250 L1080 800 M1080 250 L980 200 L980 800 M1200 450 L1080 400 M1080 330 L980 280 M1200 600 L1080 550' opacity='0.45'/%3E%3Cpath d='M1150 800 L1150 350 M1115 800 L1115 280 M1040 800 L1040 230' opacity='0.25' stroke-dasharray='5 5'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: cover;
+    background-position: center top;
+}
+
+/* Asegurar que los elementos interactivos y visuales estén por encima del fondo */
+.branding-text, .gradient-line, .screen, #panel-editor, .modal-overlay {
+    position: relative;
+    z-index: 2;
+}
+
+.branding-text {
+    margin: 20px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-logo {
+    height: 110px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 25px rgba(56, 189, 248, 0.35));
+    transition: transform 0.3s ease;
+    margin-bottom: -18px;
+    position: relative;
+    z-index: 3;
+}
+
+.brand-logo:hover {
+    transform: scale(1.03);
+}
+
+/* Línea de degradado con efecto KITT (El Auto Fantástico) */
+.gradient-line {
+    width: 60%;
+    max-width: 650px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #38bdf8, #f43f5e, transparent);
+    margin: 0 auto 20px auto;
+    border-radius: 2px;
+    position: relative;
+    z-index: 3;
+    overflow: hidden;
+}
+
+/* Haz de luz móvil estilo escáner */
+.gradient-line.animar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 60px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    box-shadow: 0 0 12px #38bdf8, 0 0 20px #f43f5e;
+    animation: kittScanner 3s ease-in-out forwards;
+}
+
+@keyframes kittScanner {
+    0% {
+        left: calc(100% - 60px);
+    }
+    50% {
+        left: 0%;
+    }
+    100% {
+        left: calc(100% - 60px);
+    }
+}
+
+/* Control de pantallas */
+.screen { display: none; width: 100%; flex-direction: column; align-items: center; }
+.screen.active { display: flex; }
+
+/* ==========================================================
+   TARJETAS DE INICIO Y CATÁLOGO
+   ========================================================== */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 95%;
+    max-width: 650px;
+    padding: 10px 10px 20px 10px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.product-card {
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(4px);
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    background: rgba(51, 65, 85, 0.95);
+    box-shadow: 0 10px 20px rgba(56, 189, 248, 0.25);
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.card-img-container {
+    width: 100%;
+    aspect-ratio: 9 / 16; 
+    background: #0b0f19;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+.product-card h3 {
+    font-size: 0.65rem;
+    margin: 8px 0 4px 0;
+    color: #bbd5f0;
+}
+
+.product-card p {
+    font-size: 0.7rem;
+    color: #bbd5f0;
+    margin: 0 0 8px 0;
+    flex-grow: 1;
+}
+
+.btn-ver {
+    background: #0b618b;
+    color: rgb(218, 232, 238);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.btn-ver:hover { background: #0369a1; }
+
+.product-card.vacia {
+    opacity: 0.6;
+    cursor: default;
+    border: 2px dashed #475569;
+    background: rgba(17, 24, 39, 0.9);
+}
+.product-card.vacia:hover {
+    transform: none;
+    background: rgba(17, 24, 39, 0.9);
+    box-shadow: none;
+}
+
+/* ==========================================================
+   VISOR 360° (MOTOR CILÍNDRICO OPTIMIZADO)
+   ========================================================== */
+.visor-container, 
+.visor-strip, 
+canvas {
+    -webkit-app-region: no-drag !important;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none !important;
+}
+
+.visor-container {
+    width: 95%;
+    max-width: 700px;
+    height: 65vh;
+    min-height: 400px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(4px);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    perspective: 1000px;
+}
+
+/* Botones flotantes del visor (Pantalla Completa y Volver al Catálogo) */
+.btn-fullscreen, .btn-back-catalog {
+    position: absolute;
+    bottom: 15px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 20;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-fullscreen {
+    right: 15px;
+}
+
+.btn-back-catalog {
+    left: 15px;
+}
+
+.btn-fullscreen:hover, .btn-back-catalog:hover {
+    background: rgba(30, 41, 59, 0.95);
+}
+
+.visor-container:fullscreen {
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    border: none;
+}
+
+.visor-strip {
+    position: absolute;
+    background-repeat: no-repeat;
+    will-change: background-position, transform;
+    backface-visibility: hidden;
+    cursor: grab;
+    touch-action: none;
+}
+.visor-strip:active { cursor: grabbing; }
+
+.visor-loader {
+    position: absolute;
+    color: #38bdf8;
+    font-weight: bold;
+    background: rgba(15, 23, 42, 0.9);
+    padding: 10px 20px;
+    border-radius: 6px;
+    z-index: 10;
+}
+
+.product-info {
+    text-align: center;
+    margin-top: 10px;
+    width: 95%;
+    max-width: 700px;
+    box-sizing: border-box;
+}
+
+.product-info h2 {
+    font-size: 1rem;
+    margin: 0 0 4px 0;
+    color: #f8fafc;
+}
+
+/* ==========================================================
+   BOTÓN DE WHATSAPP CON DEGRADADO TENUE (ZONA 360°)
+   ========================================================== */
+.btn-whatsapp-visor {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%) !important;
+    color: #cbd5e1 !important;
+    text-decoration: none !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 0.75rem !important;
+    margin-top: 4px !important;
+    box-shadow: 0 3px 8px rgba(6, 78, 59, 0.2) !important;
+    transition: filter 0.2s ease, transform 0.1s ease, color 0.2s ease !important;
+    border: 1px solid rgba(52, 211, 153, 0.2) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.btn-whatsapp-visor:hover {
+    filter: brightness(1.15) !important;
+    transform: translateY(-1px) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3) !important;
+}
+
+.wa-icon {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+/* ==========================================================
+   HOTSPOTS INTERACTIVOS
+   ========================================================== */
+#hotspots-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.hotspot-punto {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+}
+
+.hotspot-label {
+    background: rgba(15, 23, 42, 0.85);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.hotspot-punto.anticipacion {
+    width: 22px;
+    height: 22px;
+}
+.hotspot-punto.anticipacion .hotspot-pulse {
+    width: 16px;
+    height: 16px;
+    background: rgba(255, 102, 0, 0.4);
+    border: 1.5px solid rgba(56, 189, 248, 0.6);
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.4), 0 0 4px rgba(255, 102, 0, 0.4);
+    opacity: 0.65;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hotspot-punto.anticipacion .hotspot-pulse::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #ff6600;
+    border-radius: 50%;
+}
+.hotspot-punto.anticipacion .hotspot-pulse::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1.5px;
+    height: 5px;
+    background: rgba(56, 189, 248, 0.8);
+}
+
+.hotspot-punto.exacto {
+    width: 36px;
+    height: 36px;
+}
+.hotspot-punto.exacto .hotspot-pulse {
+    width: 26px;
+    height: 26px;
+    background: rgba(255, 102, 0, 0.75);
+    border: 2.5px solid #38bdf8;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 18px rgba(56, 189, 248, 1), 0 0 12px rgba(255, 102, 0, 0.9), inset 0 0 8px rgba(255, 102, 0, 0.9);
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-led 1.6s infinite;
+}
+
+.hotspot-punto.exacto .hotspot-pulse::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle at 30% 30%, #ff944d 0%, #cc5200 100%);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hotspot-punto.exacto .hotspot-pulse::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 7px;
+    background: #38bdf8;
+    box-shadow: 0 0 6px #38bdf8;
+}
+
+@keyframes pulse-led {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8), 0 0 6px rgba(255, 102, 0, 0.5), inset 0 0 8px rgba(255, 102, 0, 0.5); 
+    }
+    70% { 
+        box-shadow: 0 0 0 16px rgba(56, 189, 248, 0), 0 0 16px rgba(255, 102, 0, 0), inset 0 0 12px rgba(255, 102, 0, 0); 
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(56, 189, 248, 0), 0 0 6px rgba(255, 102, 0, 0.5), inset 0 0 8px rgba(255, 102, 0, 0.5); 
+    }
+}
+
+.hotspot-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid #38bdf8;
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: 160px;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    z-index: 20;
+}
+
+.hotspot-punto:hover .hotspot-tooltip { display: block; }
+.hotspot-tooltip h4 { margin: 0 0 4px 0; font-size: 0.9rem; color: #38bdf8; }
+.hotspot-tooltip p { margin: 0; font-size: 0.75rem; color: #cbd5e1; }
+
+/* ==========================================================
+   MODAL FLOTANTE Y FOTOS AJUSTADAS (CONFIGURACIÓN ESPACIO MÁXIMO)
+   ========================================================== */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 99999 !important;
+    backdrop-filter: blur(6px);
+}
+
+.modal-overlay.hidden {
+    display: none !important;
+}
+
+.modal-content-box {
+    width: 95% !important;
+    max-width: 480px !important;
+    max-height: 92vh !important;
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 14px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+#modal-titulo {
+    color: #38bdf8 !important;
+    font-size: 1.05rem !important;
+    margin: 0 0 8px 0 !important;
+    text-align: left !important;
+    flex-shrink: 0 !important;
+}
+
+#modal-img-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    max-height: 65vh;
+    padding: 10px;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-img-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-sub360-canvas, .modal-zoom-img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.modal-zoom-img {
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: 58vh !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+    border-radius: 8px !important;
+    background: #0b0f19 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+    cursor: zoom-in !important;
+    touch-action: pan-y !important;
+    user-select: none !important;
+    transition: opacity 0.3s ease, filter 0.3s ease !important;
+    transform-origin: center center !important;
+    flex-shrink: 0 !important;
+}
+
+#modal-img-container:has(.modal-zoom-img.is-zoomed) .modal-zoom-img:not(.is-zoomed) {
+    opacity: 0.1 !important;
+    filter: blur(10px) !important;
+    pointer-events: none !important;
+}
+
+.modal-zoom-img.is-zoomed {
+    cursor: grab !important;
+    touch-action: none !important;
+    position: relative !important;
+    z-index: 10000 !important;
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.8) !important;
+}
+
+.modal-zoom-img.is-zoomed:active {
+    cursor: grabbing !important;
+}
+
+.modal-buttons-container {
+    display: flex !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.modal-btn {
+    flex: 1 !important;
+    background: linear-gradient(135deg, #1e3a8a 0%, #38bdf8 100%) !important;
+    color: #f8fafc !important;
+    border: 1px solid #60a5fa !important;
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    font-size: 0.8rem !important;
+    text-align: center !important;
+    transition: filter 0.2s ease, transform 0.1s ease !important;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4) !important;
+}
+
+.modal-btn:hover {
+    filter: brightness(1.15) !important;
+    transform: translateY(-1px) !important;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#panel-editor.hidden {
+    display: none !important;
+}
+.visor-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 8;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.visor-hint.fade-out {
+    opacity: 0;
+}
+
+.visor-hint-icon-box {
+    background: rgba(15, 23, 42, 0.50);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(56, 189, 248, 0.7);
+    color: #f8fafc;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.3);
+    animation: hint-slide-anim 2s infinite ease-in-out;
+}
+
+.visor-hint-icon-box .hint-main {
+    font-size: 1.2rem;
+}
+
+.visor-hint-icon-box .hint-side {
+    color: rgba(56, 189, 248, 0.4); /* Color con transparencia sutil */
+    font-size: 1rem;
+    font-weight: bold;
+    animation: arrow-pulse 1s infinite alternate;
+}
+
+@keyframes hint-slide-anim {
+    0%, 100% {
+        transform: translateX(-15px);
+    }
+    50% {
+        transform: translateX(15px);
+    }
+}
+
+@keyframes arrow-pulse {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+/* ==========================================================
+   PROTECCIÓN CONTRA DESCARGA DE IMÁGENES (VISORES 360°)
+   ========================================================== */
+.visor-container, 
+#visor-screen canvas,
+.modal-sub360-canvas,
+.modal-zoom-img {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================
+   PANEL DE EDITOR DE HOTSPOTS
+   ========================================================== */
+#panel-editor {
+    margin-top: 15px;
+    padding: 10px;
+    background: #1e293b;
+    border: 1px solid #38bdf8;
+    border-radius: 8px;
+    text-align: center;
+    width: 95%;
+    max-width: 700px;
+    box-sizing: border-box;
+}
+
+.editor-titulo {
+    margin: 0 0 8px 0;
+    color: #38bdf8;
+    font-size: 0.9rem;
+}
+
+.editor-contador {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    color: #f8fafc;
+}
+
+.editor-botones {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-editor-guardar {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.btn-editor-reset {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.btn-editor-cerrar {
+    background: #64748b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.editor-resultado {
+    margin-top: 8px;
+    font-size: 0.75rem;
+}
+/* --- Estilos para la lista y botones de gestión individual de Hotspots --- */
+
+#panel-hotspots-autonomo {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    border-radius: 8px;
+    padding: 15px;
+    color: #ffffff;
+    font-family: system-ui, -apple-system, sans-serif;
+    z-index: 99999;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+}
+
+#panel-hotspots-autonomo .panel-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #38bdf8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+#panel-hotspots-autonomo .badge-total {
+    background: rgba(56, 189, 248, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #38bdf8;
+}
+
+#lista-hotspots-items,
+#lista-editor-hotspots {
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    margin-bottom: 10px;
+    padding-right: 4px;
+}
+
+.hotspot-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hotspot-row span {
+    color: #f8fafc;
+}
+
+.btn-borrar-spot,
+.btn-eliminar-individual {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+
+.btn-borrar-spot:hover,
+.btn-eliminar-individual:hover {
+    background: #dc2626;
+}
+
+.panel-footer-info {
+    font-size: 11px;
+    color: #94a3b8;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    padding-top: 6px;
+}
