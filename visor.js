@@ -1,26 +1,10 @@
 /* ==========================================================
    VISOR 360° - MOTOR DUAL (HTML5 VIDEO SCRUBBING + THREE.JS SPRITES)
-   Optimizada para prevención de fugas de memoria, suavizado de video y seguridad
+   Optimizada para prevención de fugas de memoria y limpieza total
    ========================================================== */
 
 window.currentProduct = null;
 window.hotspotsAcumulados = [];
-
-/* ==========================================================
-   LÍNEAS DE SEGURIDAD GLOBAL: PREVENCIÓN DE DESCARGA / INSPECCIÓN
-   ========================================================== */
-document.addEventListener("contextmenu", (e) => e.preventDefault());
-document.addEventListener("keydown", (e) => {
-    // Bloqueo de F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
-    if (
-        e.keyCode === 123 ||
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-        (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83))
-    ) {
-        e.preventDefault();
-        return false;
-    }
-});
 
 /* ==========================================================
    HELPER UNIFICADO DE COMUNICACIÓN IPC (ELECTRON)
@@ -72,13 +56,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     let velocity = 0;
     let hasMoved = false;
 
-    // Variables de control para Motor HTML5 Video (Scrubbing Suave + Inercia + Easing)
+    // Variables de control para Motor HTML5 Video (Scrubbing Fluido con Seek Lock)
     let videoElementoGlobal = null;
     let esVideoActivo = false;
-    let videoProgress = 0;       
-    let targetVideoProgress = 0;  
-    let videoVelocity = 0;        
-    let videoAnimationId = null;
+    let targetProgress = 0;
     const videoSensitivity = 2.0;
     let videoIsDragging = false;
     let videoStartX = 0;
@@ -156,10 +137,6 @@ document.addEventListener("DOMContentLoaded", async () => {
        GESTIÓN DE MEMORIA Y LIMPIEZA PROFUNDA DE VIDEO
        ========================================================== */
     function limpiarRecursosVideoGlobal() {
-        if (videoAnimationId) {
-            cancelAnimationFrame(videoAnimationId);
-            videoAnimationId = null;
-        }
         if (videoElementoGlobal) {
             videoElementoGlobal.pause();
             videoElementoGlobal.removeAttribute('src');
@@ -170,7 +147,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.onpointermove = null;
         window.onpointerup = null;
         esVideoActivo = false;
-        videoIsDragging = false;
     }
 
     if (btnBackCatalog) {
@@ -243,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 card.className = "card product-card";
                 card.innerHTML = `
                     <div class="card-img-container">
-                        <img src="${imgPortada}" alt="${product.titulo}" draggable="false" oncontextmenu="return false;">
+                        <img src="${imgPortada}" alt="${product.titulo}">
                     </div>
                     <h3>${product.titulo}</h3>
                     <p>${product.descripcion}</p>
@@ -297,35 +273,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 renderTarjetas();
                 window.scrollTo({ top: tarjetasContainer.offsetTop - 20, behavior: 'smooth' });
             };
-        }
-    }
-
-    /* ==========================================================
-       BUCLE DE ANIMACIÓN Y SUAVIZADO PARA EL MOTOR DE VIDEO (H.264)
-       ========================================================== */
-    function animarVideoSuave() {
-        if (!esVideoActivo || !videoElementoGlobal || !videoElementoGlobal.duration) return;
-
-        if (!videoIsDragging) {
-            // Inercia/fricción al soltar el puntero
-            videoVelocity *= 0.84;
-            targetVideoProgress -= videoVelocity;
-        }
-
-        // Bucle circular continuo de 0 a 1
-        if (targetVideoProgress > 1) targetVideoProgress -= 1;
-        if (targetVideoProgress < 0) targetVideoProgress += 1;
-
-        // Interpolación lineal (Easing / Lerp)
-        videoProgress += (targetVideoProgress - videoProgress) * 0.15;
-
-        // Aplicación del tiempo al motor nativo
-        videoElementoGlobal.currentTime = videoProgress * videoElementoGlobal.duration;
-
-        actualizarHotspotsEnCilindro();
-
-        if (esVideoActivo) {
-            videoAnimationId = requestAnimationFrame(animarVideoSuave);
         }
     }
 
@@ -386,31 +333,42 @@ document.addEventListener("DOMContentLoaded", async () => {
             video.muted = true;
             video.playsInline = true;
             video.preload = "auto";
-            video.controls = false; // Seguridad: Oculta la barra de controles e interfaz de descarga
-            video.setAttribute("controlsList", "nodownload nofullscreen noremoteplayback"); // Seguridad HTML5
-            video.style.cssText = "width: 100%; height: 100%; object-fit: contain; cursor: grab; touch-action: none; display: block; position: absolute; top: 0; left: 0; user-select: none; -webkit-user-drag: none;";
+            video.style.cssText = "width: 100%; height: 100%; object-fit: contain; cursor: grab; touch-action: none; display: block; position: absolute; top: 0; left: 0;";
             
-            // Protección contra menú contextual directamente en el nodo de video
-            video.addEventListener("contextmenu", (e) => e.preventDefault());
-
             container.insertBefore(video, container.firstChild);
             videoElementoGlobal = video;
 
-            videoProgress = 0;
-            targetVideoProgress = 0;
-            videoVelocity = 0;
+            targetProgress = 0;
+
+            // ==========================================
+            // PATRÓN SEEK LOCK (OPTIMIZACIÓN DE SCRUBBING)
+            // ==========================================
+            let isSeeking = false;
+            let pendingTime = null;
+
+            function ejecutarSeek() {
+                if (pendingTime === null) {
+                    isSeeking = false;
+                    return;
+                }
+                isSeeking = true;
+                let target = pendingTime;
+                pendingTime = null;
+                video.currentTime = target;
+            }
+
+            video.addEventListener("seeked", () => {
+                ejecutarSeek();
+            });
+            // ==========================================
 
             video.addEventListener("loadedmetadata", () => {
                 if (loader) loader.style.display = "none";
                 video.currentTime = 0;
-                if (videoAnimationId) cancelAnimationFrame(videoAnimationId);
-                animarVideoSuave(); // Arranca el motor de animación suave por frame
             });
 
             if (video.readyState >= 1 && loader) {
                 loader.style.display = "none";
-                if (videoAnimationId) cancelAnimationFrame(videoAnimationId);
-                animarVideoSuave();
             }
 
             const pointerDownVideo = (e) => {
@@ -418,7 +376,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 videoIsDragging = true;
                 hasMoved = false;
                 videoStartX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-                videoVelocity = 0;
                 video.style.cursor = "grabbing";
                 e.preventDefault();
             };
@@ -434,13 +391,24 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const rect = container.getBoundingClientRect();
                 const factor = (deltaX / rect.width) * videoSensitivity;
                 
-                targetVideoProgress -= factor;
-                videoVelocity = factor * 0.4; // Registrar velocidad para inercia fluida al soltar
+                targetProgress -= factor;
+
+                if (targetProgress > 1) targetProgress = 0;
+                if (targetProgress < 0) targetProgress = 1;
+
+                // Asignamos el tiempo al flujo controlado por Seek Lock
+                pendingTime = targetProgress * video.duration;
+
+                if (!isSeeking) {
+                    ejecutarSeek();
+                }
+
+                actualizarHotspotsEnCilindro();
             };
 
             const pointerUpVideo = () => {
                 videoIsDragging = false;
-                if (videoElementoGlobal) videoElementoGlobal.style.cursor = "grab";
+                video.style.cursor = "grab";
             };
 
             video.onpointerdown = pointerDownVideo;
@@ -620,7 +588,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         let normalized = 0;
         if (esVideoActivo) {
-            normalized = targetVideoProgress;
+            normalized = targetProgress;
         } else {
             normalized = (-targetOffset) % 1;
             if (normalized < 0) normalized += 1;
@@ -743,7 +711,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const yPercent = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + "%";
 
         const total = window.currentProduct.totalFrames || (window.currentProduct.columns ? 40 : 8);
-        let normalized = esVideoActivo ? targetVideoProgress : ((-targetOffset) % 1);
+        let normalized = esVideoActivo ? targetProgress : ((-targetOffset) % 1);
         if (normalized < 0) normalized += 1;
         const frameReal = Math.floor(normalized * total) + 1;
 
@@ -968,8 +936,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 imgElement.alt = spot.titulo || "Detalle";
                 imgElement.className = "modal-zoom-img";
                 imgElement.draggable = false;
-                imgElement.oncontextmenu = () => false; // Seguridad adicional por foto
-                imgElement.style.cssText = "max-width: 100%; max-height: 50vh; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; border-radius: 8px; user-select: none; -webkit-user-drag: none;";
+                imgElement.style.cssText = "max-width: 100%; max-height: 50vh; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; border-radius: 8px;";
 
                 wrapperDiv.appendChild(imgElement);
 
