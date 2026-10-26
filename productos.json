@@ -29,7 +29,7 @@
         "titulo": "PRODUCTO 3",
         "descripcion": "",
         "portada": "assets/producto-3/portada-puentecito.webp",
-        "imagePath": "assets/producto-3/giro_ftgramoptimizado4.webm",
+        "imagePath": "assets/producto-3/giro_h264.mp4",
         "totalFrames": 60,
         "frameWidth": 640,
         "frameHeight": 960,
@@ -110,6 +110,19 @@
         "tipoVisor": "cilindrico",
         "totalFrames": 8,
         "frameWidth": 500,
+        "frameHeight": 960,
+        "hotspots": []
+    },
+    {
+        "id": "producto-8",
+        "titulo": "PRODUCTO 8",
+        "descripcion": "",
+        "portada": "assets/producto-8/portada-8.webp",
+        "imagePath": "assets/producto-8/giro_h264.mp4",
+        "tipoAsset": "video",
+        "tipoVisor": "cilindrico",
+        "totalFrames": 60,
+        "frameWidth": 640,
         "frameHeight": 960,
         "hotspots": []
     }
