@@ -56,11 +56,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     let velocity = 0;
     let hasMoved = false;
 
-    // Variables de control para Motor HTML5 Video (Scrubbing Fluido)
+    // Variables de control para Motor HTML5 Video (Scrubbing Fluido con Seek Lock)
     let videoElementoGlobal = null;
     let esVideoActivo = false;
     let targetProgress = 0;
-    let isVideoUpdating = false;
     const videoSensitivity = 2.0;
     let videoIsDragging = false;
     let videoStartX = 0;
@@ -145,7 +144,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             videoElementoGlobal.remove();
             videoElementoGlobal = null;
         }
-        // Desvincular eventos globales de puntero para evitar acumulación de listeners (Memory Leaks)
         window.onpointermove = null;
         window.onpointerup = null;
         esVideoActivo = false;
@@ -172,7 +170,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (panelEditor) panelEditor.classList.add("hidden");
             if (animationId) cancelAnimationFrame(animationId);
             
-            // LIMPIEZA TOTAL DE RECURSOS DE VIDEO Y MEMORIA
             limpiarRecursosVideoGlobal();
             
             await cargarDatosLocales();
@@ -280,7 +277,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function iniciarVisor(index) {
-        // Limpieza preventiva de video previo antes de abrir uno nuevo
         limpiarRecursosVideoGlobal();
 
         window.currentProduct = productsData[index];
@@ -324,14 +320,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         esVideoActivo = esVideoWebM;
 
         if (esVideoWebM) {
-            // Ocultar canvas 3D
             if (canvasElement) canvasElement.style.display = "none";
             if (animationId) {
                 cancelAnimationFrame(animationId);
                 animationId = null;
             }
 
-            // Crear elemento de video HTML5 nativo optimizado
             const video = document.createElement("video");
             video.id = "visor-video-temp";
             video.src = assetPath;
@@ -343,9 +337,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             container.insertBefore(video, container.firstChild);
             videoElementoGlobal = video;
-            
 
             targetProgress = 0;
+
+            // ==========================================
+            // PATRÓN SEEK LOCK (OPTIMIZACIÓN DE SCRUBBING)
+            // ==========================================
+            let isSeeking = false;
+            let pendingTime = null;
+
+            function ejecutarSeek() {
+                if (pendingTime === null) {
+                    isSeeking = false;
+                    return;
+                }
+                isSeeking = true;
+                let target = pendingTime;
+                pendingTime = null;
+                video.currentTime = target;
+            }
+
+            video.addEventListener("seeked", () => {
+                ejecutarSeek();
+            });
+            // ==========================================
 
             video.addEventListener("loadedmetadata", () => {
                 if (loader) loader.style.display = "none";
@@ -356,7 +371,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 loader.style.display = "none";
             }
 
-            // Eventos de scrubbing fluido para el video
             const pointerDownVideo = (e) => {
                 if (visorHint) visorHint.classList.add("fade-out");
                 videoIsDragging = true;
@@ -382,13 +396,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (targetProgress > 1) targetProgress = 0;
                 if (targetProgress < 0) targetProgress = 1;
 
-                if (!isVideoUpdating) {
-                    isVideoUpdating = true;
-                    requestAnimationFrame(() => {
-                        video.currentTime = targetProgress * video.duration;
-                        isVideoUpdating = false;
-                    });
+                // Asignamos el tiempo al flujo controlado por Seek Lock
+                pendingTime = targetProgress * video.duration;
+
+                if (!isSeeking) {
+                    ejecutarSeek();
                 }
+
                 actualizarHotspotsEnCilindro();
             };
 
@@ -406,7 +420,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
 
         } else {
-            // Mostrar canvas 3D (Tiras de imágenes estáticas / Grillas)
             if (canvasElement) canvasElement.style.display = "block";
 
             if (!renderer) {
@@ -524,7 +537,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (loader) loader.style.display = "none";
     }
 
-    // Eventos de arrastre para Three.js (Sprites)
     canvasElement.addEventListener("pointerdown", (e) => {
         if (esVideoActivo) return;
         isDragging = true;
@@ -682,7 +694,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Manejo de clics en el visor para capturar Hotspots en Editor Mode
     const visorAreaInteractiva = container;
     visorAreaInteractiva.addEventListener("click", (e) => {
         if (!modoEditor || !window.currentProduct) return;
