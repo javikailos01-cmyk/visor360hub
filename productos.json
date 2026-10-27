@@ -58,7 +58,26 @@
         "totalFrames": 60,
         "frameWidth": 640,
         "frameHeight": 960,
-        "hotspots": [],
+        "hotspots": [
+            {
+                "id": "hotspot_1793067603480",
+                "vista": "Iglesia-Ntra Sra de Fátima",
+                "frame": 5,
+                "x": "49.4%",
+                "y": "63.9%",
+                "titulo": "Nuevo Componente",
+                "descripcion": "Descripción detallada del componente.",
+                "tipo": "exacto",
+                "imagenes": [
+                    "assets/producto-5/hotspot_1793067603480/IMG_20261013_184930105_MFNR.webp",
+                    "assets/producto-5/hotspot_1793067603480/IMG_20261013_184955022_MFNR.webp",
+                    "assets/producto-5/hotspot_1793067603480/IMG_20261013_185151475_MFNR.webp",
+                    "assets/producto-5/hotspot_1793067603480/IMG_20261013_185248061_MFNR.webp",
+                    "assets/producto-5/hotspot_1793067603480/IMG_20261013_185939373_MFNR.webp"
+                ],
+                "sub360": null
+            }
+        ],
         "tipoVisor": "cilindrico",
         "tipoAsset": "video"
     },
